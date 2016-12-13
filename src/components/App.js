@@ -16,34 +16,47 @@ class App extends Component {
     super()
     // TODO
     this.state = {
+      word: _.sample(WORDS), // explaining the random word we use for the game.
+      guesses: [] // our gestures throughout the game.
     }
   }
 
   choose (letter) {
-    // TODO
+    // setting the state of the guesses to put the current guess in the empty space on the page
+    this.setState({
+      guesses: [...this.state.guesses, letter]
+      // takes guesses array and adds letter to the existing guesses
+    })
     console.log('You clicked', letter)
   }
 
   get points () {
-    // TODO
-    return 0
+    // count the number of correct guesses
+    return this.state.word.split('').filter((letter) => {
+      return this.state.guesses.includes(letter)
+    }).length
   }
-
+// rendering the alphabet keyboard
   render () {
+    const letters = ALPHABET.map((letter, i) => {
+      return <LetterButton
+        // this suns the choosing function to allow us to click and choose a letter
+        value={letter}
+        // disabling the truthyness of the guesses which includes the letter
+        onChoose={() => this.choose(letter)}
+        disabled={this.state.guesses.includes(letter)}
+        key={i} />
+    })
     return <div className='app'>
       <main>
+        {/* step is adding the points onto the guesses being made from the function on line 31 */}
         <Snowman step={this.points} size={400} />
-        {/* TODO */}
-        <Word value='SNOWMAN' guesses={['E', 'M', 'O']} />
+        <Word value={this.state.word} guesses={this.state.guesses} />
         <div className='keyboard'>
-          {/* TODO */}
-          <LetterButton
-            value='A'
-            onChoose={() => this.choose('A')}
-            disabled={false} />
+          {letters}
         </div>
       </main>
-      <footer>It's like hangman, but, um... backwards or something.</footer>
+      <footer>It's like hangman, but, um... not.</footer>
     </div>
   }
 }
